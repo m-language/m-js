@@ -1,0 +1,28 @@
+{
+  "name": "m-js",
+  "version": "1.0.0",
+  "description": "The javascript backend for M",
+  "main": "build/m.js",
+  "repository": "https://github.com/tkaden4/m-js",
+  "author": "Kaden Thomas",
+  "license": "ISC",
+  "private": false,
+  "bin": "build/index.js",
+  "scripts": {
+    "build": "tsc",
+    "run": "node build/index.js",
+    "bootstrap": "node build/index.js bootstrap",
+    "dev": "npm run build && npm run run"
+  },
+  "devDependencies": {
+    "@types/meow": "^5.0.0",
+    "@types/node": "^12.6.2",
+    "typescript": "^3.5.3"
+  },
+  "dependencies": {
+    "arcsecond": "^2.0.0",
+    "axios": "^0.19.0",
+    "chalk": "^2.4.2",
+    "meow": "^5.0.0"
+  }
+}
