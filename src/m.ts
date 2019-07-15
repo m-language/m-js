@@ -1,3 +1,4 @@
+import babel from "@babel/core";
 
 
 export const toSafeName = (name: string) => {
@@ -12,7 +13,7 @@ export const toSafeName = (name: string) => {
   return "M" + split.map(toSafeChar).join("");
 };
 
-export const convert = (parsed: string[]) => {
+export const convert = (parsed: [string, string, any][]) => {
   let definitions = {};
   parsed.forEach(([, name, body]) => (definitions[toSafeName(name)] = body));
   return {
