@@ -27,7 +27,7 @@ export const __stdin = () => {
   return __process_pure(buff[0]);
 };
 
-export const __debug = o => { console.log(o); return o };
+export const __debug = o => { console.log(o); return o; };
 export const __symbol = errFunction;
 
 export const __file_from_path = errFunction;
