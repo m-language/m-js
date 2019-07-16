@@ -39,7 +39,7 @@ export const mParser = mapParser(Arc.sequenceOf([Arc.many(expressionParser), Arc
 export default function parse(input: string) {
     let result = Arc.parse(mParser)(input);
     if(result.isError) {
-        throw new Error(result);
+        throw new Error(result.error);
     }else{
         return result.result;
     }

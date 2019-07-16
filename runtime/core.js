@@ -1,9 +1,11 @@
+import fs from "fs";
+
 class Symbol {
   constructor(symbol){
     this.symbol = symbol;
   }
 
-  apply(thisArg, args){
+  apply(_, args){
     console.log(`Apply for symbol "${this.symbol}" with`, args);
     return this;
   }
@@ -11,13 +13,19 @@ class Symbol {
 
 const errFunction = () => { throw new Error("todo"); };
 
+export const __process_pure = x => f => f(x);
+
 export const __jvm_backend = errFunction;
 export const __mangle_name = errFunction;
 export const __mpm_root = process.env["MPM_ROOT"];
 
 export const __stdout = errFunction;
 export const __stderr = errFunction;
-export const __stdin = errFunction;
+export const __stdin = () => {
+  let buff = Buffer.from(['']);
+  fs.readSync(0, buff, 0, 1, 0);
+  return __process_pure(buff[0]);
+};
 
 export const __debug = o => { console.log(o); return o };
 export const __symbol = errFunction;

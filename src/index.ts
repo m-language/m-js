@@ -40,7 +40,7 @@ const args = process.argv.slice(2);
 
 readFile("runtime/mappings.json")
   .then(data => JSON.parse(data.toString()))
-  .then(overloads => {
+  .then(async (overloads: any) => {
     switch (args[0]) {
       case "bootstrap":
         if (args[1]) {
