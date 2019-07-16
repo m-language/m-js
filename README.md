@@ -34,13 +34,15 @@ backend, you can simply run
 mjs bootstrap [COMMIT-OR-BRANCH]
 ```
 
+which will download the minified M file associated with either the branch or the commit SHA of the m compiler repo and compile it to javascript.
+
 Otherwise, you can run
 
 ```bash
 mjs build <file>
 ```
 
-which will download the minified M file associated with either the branch or the commit SHA of the m compiler repo and compile it to javascript.
+which will compile `<file>` to `<file>.js`.
 
 ## Restrictions
 
