@@ -26,7 +26,7 @@ export const expressionParser = Arc.recursiveParser(() =>
                         Arc.optionalWhitespace,
                         Arc.char(")")
                     ]),
-                    ([,,exp,,]) => { /* console.log(exp); */ return exp }
+                    ([,,exp,,]) => exp
                 )
             ])
         ]),
