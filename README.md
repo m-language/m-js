@@ -11,7 +11,7 @@ The core compiler is written in `src`, and the runtime files reside in `runtime/
 ## Installation
 
 ```bash
-git clone https://github.com/[mjs-repo]/ mjs
+git clone https://github.com/[mjs-repo] mjs
 cd mjs
 npm build
 npm link
