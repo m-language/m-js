@@ -44,6 +44,6 @@ which will download the minified M file associated with either the branch or the
 
 ## Restrictions
 
-Currently the target is supporting the node runtime, but support for browser-based environments are planned. This project may be merged into
+Currently the target is supporting the node runtime, but support for browser-based environments is planned. This project may be merged into
 the [m-language](https://github.com/m-language) organization sometime in the near future and completely rewritten, so breaking updates are more
 than likely.
