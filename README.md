@@ -6,7 +6,7 @@ Note: *under development, breaking changes daily*
 
 ## Project Layout
 
-The core compiler is written in `src`, and the runtime files reside in `runtime/`.
+The core compiler is written in `src/`, and the runtime files reside in `runtime/`.
 
 ## Installation
 
