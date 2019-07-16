@@ -186,6 +186,6 @@ export const generate = (file: MFile): string =>
     body: _.entries(file.definitions).map(([name, expr]) => toExportedName(expr, { type: "Identifier", name: name }))
   });
 
-export const externalDeclarations = (file: MFile, externs: Dictionary<string>): Dictionary<string> => {
-  return _.fromPairs(file.external.map(extern => [extern, externs[extern]]))
+export const overrides = (file: MFile, overrides: Dictionary<string>): Dictionary<string> => {
+  return _.fromPairs(file.external.map(override => [override, overrides[override]]))
 };

@@ -12,7 +12,7 @@
     "build": "tsc",
     "run": "node build/index.js",
     "bootstrap": "node build/index.js bootstrap",
-    "dev": "npm run build && npm run run"
+    "dev": "npm run build && npm run bootstrap master"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.5.4",

@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import parse from "./parse";
-import get from "./get";
+import getMinifiedCompiler from "./get";
 import * as mjs from "./m";
 import fs from "fs";
 import { promisify } from "util";
@@ -8,6 +8,7 @@ import babel = require("@babel/standalone");
 
 const writeFile = promisify(fs.writeFile);
 const readFile = promisify(fs.readFile);
+const mkdir = promisify(fs.mkdir);
 
 export const runtime = "runtime/core.js";
 
@@ -19,20 +20,46 @@ const log = x => {
   return x;
 };
 
-get("master")
-  .then(res => res.data)
-  .then(parse)
-  .then(result =>
+const compileSource = async (source: string): Promise<string> => {
+  let result = parse(source);
+  let generated = mjs.generate(
     mjs.convert(result.map(arr => arr.slice(1, arr.length)))
-  )
-  .then(file => {
-    let decls = mjs.externalDeclarations(file, {
-      debug: "console.log"
-    });
-    return file;
-  })
-  .then(mjs.generate)
-  .then(data => readFile(runtime).then(runtime => runtime + "\n" + data))
-  .then(data => babel.transform(data, { presets: ["es2015"] }).code)
-  .then(data => writeFile("out.js", data))
-  .catch(error);
+  );
+  return readFile(runtime)
+    .then(runtime => runtime + "\n" + generated)
+    .then(data => babel.transform(data, { presets: ["es2015"] }).code);
+};
+
+const bootstrap = async (revision: string): Promise<string> => {
+  return getMinifiedCompiler(revision)
+    .then(res => res.data)
+    .then(compileSource);
+};
+
+const args = process.argv.slice(2);
+
+switch (args[0]) {
+  case "bootstrap":
+    if (args[1]) {
+      mkdir("bootstrap")
+        .catch(_ => {})
+        .then(_ => bootstrap(args[1]))
+        .then(data => writeFile("bootstrap/m.js", data))
+        .catch(error);
+    } else {
+      error("no revision or branch supplied");
+    }
+    break;
+  case "build":
+    if (args[1]) {
+      readFile(args[1])
+        .then(res => compileSource(res.toString()))
+        .then(gen => writeFile(`${args[1]}.js`, gen))
+        .catch(error);
+    } else {
+      error("no revision or branch supplied");
+    }
+    break;
+  default:
+    error("invalid invocation");
+}

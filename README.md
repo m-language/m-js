@@ -2,6 +2,12 @@
 
 An ad-hoc backend for javascript to the [M](https://github.com/m-language/m-compiler) programming language.
 
+Note: *under development, breaking changes daily*
+
+## Project Layout
+
+The core compiler is written in `src`, and the runtime files reside in `runtime/`.
+
 ## Installation
 
 ```bash
@@ -26,6 +32,12 @@ backend, you can simply run
 
 ```bash
 mjs bootstrap [COMMIT-OR-BRANCH]
+```
+
+Otherwise, you can run
+
+```bash
+mjs build <file>
 ```
 
 which will download the minified M file associated with either the branch or the commit SHA of the m compiler repo and compile it to javascript.

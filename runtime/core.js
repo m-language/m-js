@@ -3,8 +3,8 @@ class Symbol {
     this.symbol = symbol;
   }
 
-  apply(args){
-    console.log(this.symbol);
+  apply(thisArg, args){
+    console.log(`Apply for symbol "${this.symbol}" with`, args);
     return this;
   }
 }
