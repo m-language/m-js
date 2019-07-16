@@ -2,12 +2,14 @@
   "name": "m-js",
   "version": "1.0.0",
   "description": "The javascript backend for M",
-  "main": "build/m.js",
+  "main": "build/index.js",
   "repository": "https://github.com/tkaden4/m-js",
   "author": "Kaden Thomas",
   "license": "ISC",
   "private": false,
-  "bin": "build/index.js",
+  "bin": {
+    "mjs": "build/index.js"
+  },
   "scripts": {
     "build": "tsc",
     "run": "node build/index.js",

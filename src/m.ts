@@ -7,21 +7,13 @@ import {
   ExportNamedDeclaration,
   Identifier,
   CallExpression,
-  Program,
-  Literal,
   Declaration,
   VariableDeclaration
 } from "estree";
-import { file } from "@babel/types";
 
 interface MFile {
   definitions: { [name: string]: VariableDeclaration };
   external: string[];
-}
-
-interface ExternValue {
-  overrideName: string;
-  internalName: string;
 }
 
 export const generateNode = (node: Node): string =>
@@ -29,7 +21,9 @@ export const generateNode = (node: Node): string =>
 
 export const toSafeName = (name: string): string => {
   let split = name.split("");
-  let toSafeChar = char => {
+  let toSafeChar = (char: string) => {
+    if (char.length != 1)
+      throw new Error(`passed a string when a char was expected: ${char}`);
     if (/[a-zA-Z]/.test(char)) {
       return char;
     } else {
@@ -41,27 +35,30 @@ export const toSafeName = (name: string): string => {
 
 export const convertFunction = (
   params: string[],
-  body: any
+  body: any,
+  env: any
 ): ArrowFunctionExpression => {
+  let childEnv = _.clone(env);
+  params.forEach(param => childEnv[param] = toSafeName(param));
   return {
     type: "ArrowFunctionExpression",
     params: params.map(param => ({
       type: "Identifier",
-      name: toSafeName(param)
+      name: childEnv[param]
     })),
     expression: true,
-    body: convertExpression(body)
+    body: convertExpression(body, childEnv)
   };
 };
 
-export const convertLiteral = (expr: any): Expression => {
+export const convertLiteral = (expr: any, env: any): Expression => {
   return {
     type: "Identifier",
-    name: toSafeName(expr)
+    name: env[expr]
   };
 };
 
-export const convertApply = (expr: any[]): CallExpression => {
+export const convertApply = (expr: any[], env: any): CallExpression => {
   let callTarget = expr[0];
   let params = _.slice(expr, 1);
   return {
@@ -73,13 +70,13 @@ export const convertApply = (expr: any[]): CallExpression => {
       },
       {
         type: "ArrayExpression",
-        elements: params.map(convertExpression)
+        elements: params.map(el => convertExpression(el, env))
       }
     ],
     callee: {
       type: "MemberExpression",
       computed: false,
-      object: convertExpression(callTarget),
+      object: convertExpression(callTarget, env),
       property: {
         type: "Identifier",
         name: "apply"
@@ -88,7 +85,7 @@ export const convertApply = (expr: any[]): CallExpression => {
   };
 };
 
-export const convertSymbol = (expr: any): CallExpression => {
+export const convertSymbol = (expr: any, env: any): CallExpression => {
   return {
     type: "CallExpression",
     arguments: [
@@ -99,46 +96,51 @@ export const convertSymbol = (expr: any): CallExpression => {
     ],
     callee: {
       type: "Identifier",
-      name: "__to_m_symbol"
+      name: env["symbol"]
     }
   };
 };
 
-export const convertExpression = (expr: any): Expression => {
+export const convertExpression = (expr: any, env: any): Expression => {
   if (Array.isArray(expr)) {
     if (expr[0] === "fn") {
       let body = _.last(expr);
       let params = _.slice(expr, 1, expr.length - 1);
-      return convertFunction(params, body);
+      return convertFunction(params, body, env);
     } else {
       if (expr[0] === "symbol") {
-        return convertSymbol(expr[1]);
+        return convertSymbol(expr[1], env);
       } else {
-        return convertApply(expr);
+        return convertApply(expr, env);
       }
     }
   } else {
-    return convertLiteral(expr);
+    return convertLiteral(expr, env);
   }
 };
 
-export const convert = (parsed: [string, any][]): MFile => {
+export const convert = (parsed: [string, any][], overrides: any): MFile => {
   let externs = [];
   let topLevelDeclarations: Dictionary<Expression> = {};
+  let names = parsed.map(([name,]) => name);
+
+  let thisEnv = {}
+  names.forEach(name => thisEnv[name] = toSafeName(name));
+
+  let env = _.merge(thisEnv, overrides);
 
   parsed.forEach(([name, val]) => {
-    if(name === val){
+    if (name === val) {
       externs.push(name);
-    }else{
-      topLevelDeclarations[name] = convertExpression(val);
+    } else {
+      topLevelDeclarations[name] = convertExpression(val, env);
     }
   });
-
   let declarationEntries = Object.entries(topLevelDeclarations).map(
     ([name, value]: [string, Expression]): [string, VariableDeclaration] => {
       let id: Identifier = {
         type: "Identifier",
-        name: toSafeName(name)
+        name: env[name]
       };
       return [
         name,
@@ -179,13 +181,20 @@ export const toExportedName = (
   };
 };
 
-export const generate = (file: MFile): string =>
+export const generate = (file: MFile, env: any): string =>
   generateNode({
     type: "Program",
     sourceType: "module",
-    body: _.entries(file.definitions).map(([name, expr]) => toExportedName(expr, { type: "Identifier", name: name }))
+    body: _.entries(file.definitions).map(([name, expr]) =>
+      toExportedName(expr, { type: "Identifier", name: env[name] })
+    )
   });
 
-export const overrides = (file: MFile, overrides: Dictionary<string>): Dictionary<string> => {
-  return _.fromPairs(file.external.map(override => [override, overrides[override]]))
+export const overrides = (
+  file: MFile,
+  overrides: Dictionary<string>
+): Dictionary<string> => {
+  return _.fromPairs(
+    file.external.map(override => [override, overrides[override]])
+  );
 };

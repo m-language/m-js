@@ -1,0 +1,20 @@
+{
+  "jvm-backend": "__jvm_backend",
+  "mangle-fn-name": "__mangle_name",
+  "mpm-root": "__mpm_root",
+  "stdout": "__stdout",
+  "stderr": "__stderr",
+  "stdin": "__stdin",
+  "debug": "__debug",
+  "symbol": "__symbol",
+  "file.from-path": "__file_from_path",
+  "file.name": "__file_name",
+  "file.name-without-extension": "__file_name_without_extension",
+  "file.child": "__file_child",
+  "file.exists?": "__file_exists_predicate",
+  "file.read": "__file_read",
+  "file.write": "__file_write",
+  "file.directory?": "__file_directory_predicate",
+  "file.child-files": "__file_child_files",
+  "file.copy": "__file_copy"
+}
