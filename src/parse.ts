@@ -17,13 +17,7 @@ export const expressionParser = Arc.recursiveParser(() =>
       Arc.choice([
         symbolParser,
         mapParser(
-          Arc.sequenceOf([
-            Arc.char("("),
-            Arc.optionalWhitespace,
-            Arc.many(expressionParser),
-            Arc.optionalWhitespace,
-            Arc.char(")")
-          ]),
+          Arc.sequenceOf([Arc.char("("), Arc.optionalWhitespace, Arc.many(expressionParser), Arc.optionalWhitespace, Arc.char(")")]),
           ([, , exp, ,]) => exp
         )
       ])
@@ -32,10 +26,7 @@ export const expressionParser = Arc.recursiveParser(() =>
   )
 );
 
-export const mParser = mapParser(
-  Arc.sequenceOf([Arc.many(expressionParser), Arc.optionalWhitespace, Arc.endOfInput]),
-  ([el, ,]) => el
-);
+export const mParser = mapParser(Arc.sequenceOf([Arc.many(expressionParser), Arc.optionalWhitespace, Arc.endOfInput]), ([el, ,]) => el);
 
 export default function parse(input: string) {
   let result = Arc.parse(mParser)(input);

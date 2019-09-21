@@ -130,28 +130,29 @@ export const convert = (parsed: [string, any][], overrides: Dictionary<string>):
       topLevelDeclarations[name] = convertExpression(val, env);
     }
   });
-  let declarationEntries = Object.entries(topLevelDeclarations).map(
-    ([name, value]: [string, Expression]): [string, VariableDeclaration] => {
-      let id: Identifier = {
-        type: "Identifier",
-        name: env[name]
-      };
-      return [
-        name,
-        {
-          type: "VariableDeclaration",
-          kind: "const",
-          declarations: [
-            {
-              type: "VariableDeclarator",
-              id,
-              init: value
-            }
-          ]
-        }
-      ];
-    }
-  );
+  let declarationEntries = Object.entries(topLevelDeclarations).map(([name, value]: [string, Expression]): [
+    string,
+    VariableDeclaration
+  ] => {
+    let id: Identifier = {
+      type: "Identifier",
+      name: env[name]
+    };
+    return [
+      name,
+      {
+        type: "VariableDeclaration",
+        kind: "const",
+        declarations: [
+          {
+            type: "VariableDeclarator",
+            id,
+            init: value
+          }
+        ]
+      }
+    ];
+  });
   return {
     external: externs,
     definitions: _.fromPairs(declarationEntries)
@@ -176,9 +177,7 @@ export const generate = (file: MFile, env: Dictionary<string>): string =>
   generateNode({
     type: "Program",
     sourceType: "module",
-    body: _.entries(file.definitions).map(([name, expr]) =>
-      toExportedName(expr, { type: "Identifier", name: env[name] })
-    )
+    body: _.entries(file.definitions).map(([name, expr]) => toExportedName(expr, { type: "Identifier", name: env[name] }))
   });
 
 export const overrides = (file: MFile, overrides: Dictionary<string>): Dictionary<string> => {
