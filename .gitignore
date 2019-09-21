@@ -1,8 +1,7 @@
-/node_modules
+/node_modules/
 /yarn-error.log
-/m.m
 /build/
 /.vscode/
-/bootstrap
+/bootstrap/
 /package-lock.json
 /test/

@@ -16,14 +16,12 @@ interface MFile {
   external: string[];
 }
 
-export const generateNode = (node: Node): string =>
-  escodegen.generate(node, { format: { compact: true } });
+export const generateNode = (node: Node): string => escodegen.generate(node, { format: { compact: true } });
 
 export const toSafeName = (name: string): string => {
   let split = name.split("");
   let toSafeChar = (char: string) => {
-    if (char.length != 1)
-      throw new Error(`passed a string when a char was expected: ${char}`);
+    if (char.length != 1) throw new Error(`passed a string when a char was expected: ${char}`);
     if (/[a-zA-Z]/.test(char)) {
       return char;
     } else {
@@ -33,13 +31,9 @@ export const toSafeName = (name: string): string => {
   return "m_" + split.map(toSafeChar).join("");
 };
 
-export const convertFunction = (
-  params: string[],
-  body: any,
-  env: any
-): ArrowFunctionExpression => {
+export const convertFunction = (params: string[], body: any, env: Dictionary<string>): ArrowFunctionExpression => {
   let childEnv = _.clone(env);
-  params.forEach(param => childEnv[param] = toSafeName(param));
+  params.forEach(param => (childEnv[param] = toSafeName(param)));
   return {
     type: "ArrowFunctionExpression",
     params: params.map(param => ({
@@ -51,14 +45,14 @@ export const convertFunction = (
   };
 };
 
-export const convertLiteral = (expr: any, env: any): Expression => {
+export const convertLiteral = (expr: any, env: Dictionary<string>): Expression => {
   return {
     type: "Identifier",
     name: env[expr]
   };
 };
 
-export const convertApply = (expr: any[], env: any): CallExpression => {
+export const convertApply = (expr: any[], env: Dictionary<string>): CallExpression => {
   let callTarget = expr[0];
   let params = _.slice(expr, 1);
   return {
@@ -85,7 +79,7 @@ export const convertApply = (expr: any[], env: any): CallExpression => {
   };
 };
 
-export const convertSymbol = (expr: any, env: any): CallExpression => {
+export const convertSymbol = (expr: any, env: Dictionary<string>): CallExpression => {
   return {
     type: "CallExpression",
     arguments: [
@@ -101,7 +95,7 @@ export const convertSymbol = (expr: any, env: any): CallExpression => {
   };
 };
 
-export const convertExpression = (expr: any, env: any): Expression => {
+export const convertExpression = (expr: any, env: Dictionary<string>): Expression => {
   if (Array.isArray(expr)) {
     if (expr[0] === "fn") {
       let body = _.last(expr);
@@ -119,13 +113,13 @@ export const convertExpression = (expr: any, env: any): Expression => {
   }
 };
 
-export const convert = (parsed: [string, any][], overrides: any): MFile => {
+export const convert = (parsed: [string, any][], overrides: Dictionary<string>): MFile => {
   let externs = [];
   let topLevelDeclarations: Dictionary<Expression> = {};
-  let names = parsed.map(([name,]) => name);
+  let names = parsed.map(([name]) => name);
 
-  let thisEnv = {}
-  names.forEach(name => thisEnv[name] = toSafeName(name));
+  let thisEnv = {};
+  names.forEach(name => (thisEnv[name] = toSafeName(name)));
 
   let env = _.merge(thisEnv, overrides);
 
@@ -164,10 +158,7 @@ export const convert = (parsed: [string, any][], overrides: any): MFile => {
   };
 };
 
-export const toExportedName = (
-  decl: Declaration,
-  id: Identifier
-): ExportNamedDeclaration => {
+export const toExportedName = (decl: Declaration, id: Identifier): ExportNamedDeclaration => {
   return {
     type: "ExportNamedDeclaration",
     specifiers: [
@@ -181,7 +172,7 @@ export const toExportedName = (
   };
 };
 
-export const generate = (file: MFile, env: any): string =>
+export const generate = (file: MFile, env: Dictionary<string>): string =>
   generateNode({
     type: "Program",
     sourceType: "module",
@@ -190,11 +181,6 @@ export const generate = (file: MFile, env: any): string =>
     )
   });
 
-export const overrides = (
-  file: MFile,
-  overrides: Dictionary<string>
-): Dictionary<string> => {
-  return _.fromPairs(
-    file.external.map(override => [override, overrides[override]])
-  );
+export const overrides = (file: MFile, overrides: Dictionary<string>): Dictionary<string> => {
+  return _.fromPairs(file.external.map(override => [override, overrides[override]]));
 };
