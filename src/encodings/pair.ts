@@ -1,8 +1,8 @@
 import Value from "./value";
 
 export default class Pair<First extends Value = Value, Second extends Value = Value> implements Value {
-  readonly first: First;
-  readonly second: Second;
+  public readonly first: First;
+  public readonly second: Second;
 
   constructor(first: First, second: Second) {
     this.first = first;

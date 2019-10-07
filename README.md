@@ -2,7 +2,7 @@
 
 An ad-hoc backend for javascript to the [M](https://github.com/m-language/m-compiler) programming language.
 
-Note: *under development, breaking changes daily*
+Note: _under development, breaking changes daily_
 
 ## Project Layout
 
@@ -13,7 +13,7 @@ The core compiler is written in `src/`, and the runtime files reside in `runtime
 ```bash
 git clone https://github.com/[mjs-repo] mjs
 cd mjs
-npm build
+npm run build:cli
 npm link
 ```
 
@@ -21,10 +21,10 @@ npm link
 
 `m-js` can compile a subset of M known as "minified M". This subset of M has the following restrictions:
 
- * No macros
- * No dependency resolution
- * No multi-argument functions
- * No out-of-order functions
+- No macros
+- No dependency resolution
+- No multi-argument functions
+- No out-of-order functions
 
 While this seems restrictive, the [m compiler](https://github.com/m-language/m-compiler) can take any input M program
 and produce a file that follows the restrictions outlined above. If you are compiling the compiler itself with this

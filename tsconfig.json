@@ -9,8 +9,9 @@
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "declarationDir": "build",
+    "declaration": true,
     "lib": ["es2018", "esnext"]
   },
-  "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
 }
