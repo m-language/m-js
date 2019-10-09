@@ -1,7 +1,11 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "target": "es2017"
+    "target": "es6",
+    "outDir": "encodings",
+    "declarationDir": "encodings",
+    "declaration": true,
+    "strict": true
   },
   "include": ["src/encodings/**/*.ts"]
 }

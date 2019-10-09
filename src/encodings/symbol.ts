@@ -3,7 +3,7 @@ import List from "./list";
 import Char from "./char";
 
 export default class Symbol implements Value {
-  private readonly symbol: string;
+  public readonly symbol: string;
 
   constructor(symbol: string) {
     this.symbol = symbol;

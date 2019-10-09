@@ -8,6 +8,19 @@ export default abstract class Process implements Value {
   abstract run(): Value;
 }
 
+export class Impure extends Process {
+  private readonly value: any;
+
+  constructor(value: Value) {
+    super();
+    this.value = value;
+  }
+
+  run(): Process {
+    return this.value;
+  }
+}
+
 export class ThenRunWith extends Process {
   readonly process: Process;
   readonly value: Value;
