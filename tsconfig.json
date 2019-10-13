@@ -11,5 +11,6 @@
     "declaration": true,
     "lib": ["es2018", "esnext"]
   },
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "runtime", "build", "bootstrap"],
+  "include": ["src/**/*"]
 }

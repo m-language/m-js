@@ -2,14 +2,14 @@ import Value from "./value";
 import Fn from "./fn";
 
 export default class Bool implements Value {
-  readonly value: boolean;
+  readonly bool: boolean;
 
   constructor(value: boolean) {
-    this.value = value;
+    this.bool = value;
   }
 
   apply(arg: Value): Value {
-    return Fn.fromUnary(x => (this.value ? arg : x));
+    return Fn.from(x => (this.bool ? arg : x), "Bool/apply");
   }
 
   static from(boolean: boolean) {

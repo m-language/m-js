@@ -2,10 +2,10 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "target": "es6",
-    "outDir": "encodings",
-    "declarationDir": "encodings",
+    "outDir": "build/lib/runtime",
+    "declarationDir": "build/lib/runtime",
     "declaration": true,
     "strict": true
   },
-  "include": ["src/encodings/**/*.ts"]
+  "include": ["src/runtime/**/*.ts"]
 }

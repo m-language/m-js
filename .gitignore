@@ -5,4 +5,6 @@
 /bootstrap/
 /package-lock.json
 /test/
-/encodings/
+/build/
+/bootstrap/
+/m.js

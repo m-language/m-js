@@ -1,5 +1,5 @@
-import escodegen from "escodegen";
-import _, { Dictionary } from "lodash";
+import * as escodegen from "escodegen";
+import * as _ from "lodash";
 import {
   Node,
   ArrowFunctionExpression,
@@ -31,7 +31,7 @@ export const toSafeName = (name: string): string => {
   return "m_" + split.map(toSafeChar).join("");
 };
 
-export const convertFunction = (params: string[], body: any, env: Dictionary<string>): ArrowFunctionExpression => {
+export const convertFunction = (params: string[], body: any, env: _.Dictionary<string>): ArrowFunctionExpression => {
   let childEnv = _.clone(env);
   params.forEach(param => (childEnv[param] = toSafeName(param)));
   return {
@@ -45,14 +45,14 @@ export const convertFunction = (params: string[], body: any, env: Dictionary<str
   };
 };
 
-export const convertLiteral = (expr: any, env: Dictionary<string>): Expression => {
+export const convertLiteral = (expr: any, env: _.Dictionary<string>): Expression => {
   return {
     type: "Identifier",
     name: env[expr]
   };
 };
 
-export const convertApply = (expr: any[], env: Dictionary<string>): CallExpression => {
+export const convertApply = (expr: any[], env: _.Dictionary<string>): CallExpression => {
   let callTarget = expr[0];
   let params = _.slice(expr, 1);
   return {
@@ -79,7 +79,7 @@ export const convertApply = (expr: any[], env: Dictionary<string>): CallExpressi
   };
 };
 
-export const convertSymbol = (expr: any, env: Dictionary<string>): CallExpression => {
+export const convertSymbol = (expr: any, env: _.Dictionary<string>): CallExpression => {
   return {
     type: "CallExpression",
     arguments: [
@@ -95,7 +95,7 @@ export const convertSymbol = (expr: any, env: Dictionary<string>): CallExpressio
   };
 };
 
-export const convertExpression = (expr: any, env: Dictionary<string>): Expression => {
+export const convertExpression = (expr: any, env: _.Dictionary<string>): Expression => {
   if (Array.isArray(expr)) {
     if (expr[0] === "fn") {
       let body = _.last(expr);
@@ -113,9 +113,9 @@ export const convertExpression = (expr: any, env: Dictionary<string>): Expressio
   }
 };
 
-export const convert = (parsed: [string, any][], overrides: Dictionary<string>): MFile => {
+export const convert = (parsed: [string, any][], overrides: _.Dictionary<string>): MFile => {
   let externs = [];
-  let topLevelDeclarations: Dictionary<Expression> = {};
+  let topLevelDeclarations: _.Dictionary<Expression> = {};
   let names = parsed.map(([name]) => name);
 
   let thisEnv = {};
@@ -173,13 +173,13 @@ export const toExportedName = (decl: Declaration, id: Identifier): ExportNamedDe
   };
 };
 
-export const generate = (file: MFile, env: Dictionary<string>): string =>
+export const generate = (file: MFile, env: _.Dictionary<string>): string =>
   generateNode({
     type: "Program",
     sourceType: "module",
     body: _.entries(file.definitions).map(([name, expr]) => toExportedName(expr, { type: "Identifier", name: env[name] }))
   });
 
-export const overrides = (file: MFile, overrides: Dictionary<string>): Dictionary<string> => {
+export const overrides = (file: MFile, overrides: _.Dictionary<string>): _.Dictionary<string> => {
   return _.fromPairs(file.external.map(override => [override, overrides[override]]));
 };

@@ -3,10 +3,10 @@ import chalk from "chalk";
 import parse from "./parse";
 import getMinifiedCompiler from "./min";
 import * as mjs from "./compile";
-import fs from "fs";
+import * as fs from "fs";
 import { promisify } from "util";
-import babel = require("@babel/standalone");
-import { envOf, runProgram } from "./interpreter";
+const babel = require("@babel/standalone");
+import { envOf, runProgram } from "../interpreter";
 
 const writeFile = promisify(fs.writeFile);
 const readFile = promisify(fs.readFile);

@@ -2,12 +2,24 @@ import Value from "./value";
 import Pair from "./pair";
 import Fn from "./fn";
 
-export default abstract class List<T extends Value = Value> implements Value {
-  abstract apply(arg: Value): Value;
-  abstract iterator(): IterableIterator<T>;
-  static fromArray<T extends Value = Value>(array: Array<T>) {
-    return array.reduceRight((acc: List<T>, x: T) => new Cons(x, acc), new Nil());
+export class Nil implements List<never> {
+  *iterator(): IterableIterator<never> {}
+
+  apply(arg: Value): Value {
+    return Fn.from(_ => arg, "Nil/apply");
   }
+}
+
+export abstract class List<T extends Value = Value> implements Value {
+  abstract apply(arg: Value): Value;
+
+  abstract iterator(): IterableIterator<T>;
+
+  static fromArray<T extends Value = Value>(array: Array<T>) {
+    return array.reduceRight((acc: List<T>, x: T) => new Cons(x, acc) as List<T>, List.nil);
+  }
+
+  public static nil = new Nil();
 }
 
 export class Cons<T extends Value = Value> extends Pair<T, List<T>> implements List<T> {
@@ -21,14 +33,4 @@ export class Cons<T extends Value = Value> extends Pair<T, List<T>> implements L
   apply(arg: Value): Value {
     return super.apply(arg);
   }
-}
-
-export class Nil<T extends Value> implements List<T> {
-  *iterator(): IterableIterator<T> {}
-
-  apply(arg: Value): Value {
-    return Fn.fromUnary(_ => arg);
-  }
-
-  static readonly instance = new Nil();
 }

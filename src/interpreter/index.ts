@@ -1,7 +1,7 @@
-import parse from "../parse";
-import Value from "../encodings/value";
-import Nat from "../encodings/nat";
-import Process from "../encodings/process";
+import parse from "../internal/parse";
+import Value from "../runtime/encodings/value";
+import Nat from "../runtime/encodings/nat";
+import Process from "../runtime/encodings/process";
 
 /* Access to global variables, present on both web and node platforms */
 /* TODO make sure this cant be changed */

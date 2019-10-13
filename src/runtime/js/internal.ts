@@ -1,19 +1,20 @@
 import JSValue from "./JSValue";
-import Value from "../value";
-import Symbol from "../symbol";
-import { Impure } from "../process";
-import List, { Nil } from "../list";
-import Nat from "../nat";
-import Bool from "../bool";
+import Symbol from "../encodings/symbol";
+import { Impure } from "../encodings/process";
+import { List } from "../encodings/list";
+import Nat from "../encodings/nat";
+import Bool from "../encodings/bool";
+import Pair from "../encodings/pair";
+import Value from "../encodings/value";
 
-export const jsValueType = (value: JSValue) => new Symbol(typeof value.value);
+export const jsValueType = (value: JSValue) => Symbol.from(typeof value.value);
 
 export const jsValueGetProperty = (value: JSValue, property: Symbol) => new JSValue(value.value[(property as Symbol).symbol]);
 
 export const jsValueSetProperty = (value: JSValue, property: Symbol, newValue: JSValue) => {
   // TODO this is so entirely wrong
   value.value[property.symbol] = (newValue as JSValue).value;
-  return new Impure(Nil.instance);
+  return new Impure(List.nil);
 };
 
 export const jsInvokeMethod = (fn: JSValue, thisValue: JSValue, args: List) =>
@@ -27,17 +28,23 @@ export const jsUndefined = new JSValue(void undefined);
 
 export const jsString = (symbol: Symbol) => new JSValue(symbol.symbol);
 
+export const jsBool = (bool: Bool) => JSValue.fromBool(bool.bool);
+
 export const jsNumber = (natural: Nat) => new JSValue(natural.nat);
 
-export const jsObject = (object: List<List>) =>
+export const jsObject = (assocList: List<Pair<Symbol, JSValue>>) =>
   new JSValue(
-    Array.from(object.iterator()).reduce((acc: any, x: Value) => {
-      const assoc = Array.from((x as List).iterator());
-      acc[(assoc[0] as Symbol).symbol] = (assoc[1] as JSValue).value;
-      return acc;
+    Array.from(assocList.iterator()).reduce((resultObject: any, associationPair: Pair<Symbol, JSValue>) => {
+      resultObject[associationPair.first.symbol] = associationPair.second;
+      return resultObject;
     }, {})
   );
 
 export const jsEqualPredicate = (a: JSValue, b: JSValue) => Bool.from(a.value === b.value);
 
 export const jsPolyEqualPredicate = (a: JSValue, b: JSValue) => Bool.from(a.value == b.value);
+
+/* post process a compiled javascript file (from m) */
+export const jsPostProcess = (a: Value) => {
+  return a;
+};
